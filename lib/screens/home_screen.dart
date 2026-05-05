@@ -1,47 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/kas_provider.dart';
-import '../widgets/kas_card.dart';
+import '../providers/transaction_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  // Fungsi helper untuk format angka menjadi Rupiah (tanpa package tambahan)
+  String _formatCurrency(double amount) {
+    String amountStr = amount.toStringAsFixed(0);
+    String result = '';
+    int count = 0;
+    for (int i = amountStr.length - 1; i >= 0; i--) {
+      result = amountStr[i] + result;
+      count++;
+      if (count % 3 == 0 && i != 0) {
+        result = '.$result';
+      }
+    }
+    return 'Rp $result';
+  }
+
+  // Fungsi helper untuk format tanggal sederhana
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[50], // Background lebih bersih
       appBar: AppBar(
         title: const Text(
           'KasKita',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
+        backgroundColor: Colors.blue[700], // Warna biru modern
+        elevation: 0,
+        centerTitle: true,
       ),
-      body: Consumer<KasProvider>(
+      body: Consumer<TransactionProvider>(
         builder: (context, provider, child) {
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // --- 1. CARD SALDO UTAMA ---
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(24.0),
-                decoration: const BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.only(
+                padding: const EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 20),
+                decoration: BoxDecoration(
+                  color: Colors.blue[700],
+                  borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(30),
                     bottomRight: Radius.circular(30),
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
                 ),
                 child: Column(
                   children: [
                     const Text(
                       'Total Saldo',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Rp ${provider.totalSaldo.toStringAsFixed(0)}',
+                      _formatCurrency(provider.totalBalance),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 36,
@@ -51,22 +79,101 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+
+              // --- 2. CARD INCOME & EXPENSE ---
+              Transform.translate(
+                offset: const Offset(0, -25),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _buildInfoCard(
+                          title: 'Pemasukan',
+                          amount: provider.totalIncome,
+                          color: Colors.green,
+                          icon: Icons.arrow_downward,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildInfoCard(
+                          title: 'Pengeluaran',
+                          amount: provider.totalExpense,
+                          color: Colors.redAccent,
+                          icon: Icons.arrow_upward,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // --- 3. JUDUL LIST TRANSAKSI TERBARU ---
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: Text(
+                  'Transaksi Terbaru',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+
+              // --- 4. LIST TRANSAKSI ---
               Expanded(
-                child: provider.kasList.isEmpty
+                child: provider.transactions.isEmpty
                     ? const Center(
                         child: Text(
                           'Belum ada transaksi',
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
                         ),
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: provider.kasList.length,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        itemCount: provider.transactions.length,
                         itemBuilder: (context, index) {
-                          // Display in reverse order (newest first)
-                          final kas = provider.kasList[provider.kasList.length - 1 - index];
-                          return KasCard(kas: kas);
+                          final tx = provider.transactions[index];
+                          final isIncome = tx.type == 'income';
+
+                          return Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              leading: CircleAvatar(
+                                backgroundColor: isIncome ? Colors.green[50] : Colors.red[50],
+                                child: Icon(
+                                  isIncome ? Icons.arrow_downward : Icons.arrow_upward,
+                                  color: isIncome ? Colors.green : Colors.redAccent,
+                                ),
+                              ),
+                              title: Text(
+                                tx.title,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  _formatDate(tx.date),
+                                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                                ),
+                              ),
+                              trailing: Text(
+                                '${isIncome ? '+' : '-'} ${_formatCurrency(tx.amount)}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: isIncome ? Colors.green : Colors.redAccent,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          );
                         },
                       ),
               ),
@@ -76,10 +183,75 @@ class HomeScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          // Route '/add' bisa Anda sesuaikan jika belum ada
           Navigator.pushNamed(context, '/add');
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue[700],
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+
+  // Widget helper untuk merender Card Income & Expense
+  Widget _buildInfoCard({
+    required String title,
+    required double amount,
+    required Color color,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: color, size: 16),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            _formatCurrency(amount),
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }

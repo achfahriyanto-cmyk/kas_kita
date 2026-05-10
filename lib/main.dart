@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'providers/transaction_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/add_transaction_screen.dart';
@@ -23,6 +24,7 @@ class KasKitaApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
+          textTheme: GoogleFonts.poppinsTextTheme(),
           colorScheme: ColorScheme.fromSeed(
             seedColor: const Color(0xFF1E293B),
             primary: const Color(0xFF1E293B),

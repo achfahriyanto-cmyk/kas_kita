@@ -18,11 +18,11 @@ class KasCard extends StatelessWidget {
         contentPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(
           backgroundColor: kas.isPemasukan 
-              ? Colors.green.withValues(alpha: 0.1) 
-              : Colors.red.withValues(alpha: 0.1),
+              ? const Color(0xFF10B981).withValues(alpha: 0.1) 
+              : const Color(0xFFE11D48).withValues(alpha: 0.1),
           child: Icon(
             kas.isPemasukan ? Icons.arrow_downward : Icons.arrow_upward,
-            color: kas.isPemasukan ? Colors.green : Colors.red,
+            color: kas.isPemasukan ? const Color(0xFF10B981) : const Color(0xFFE11D48),
           ),
         ),
         title: Text(
@@ -38,7 +38,7 @@ class KasCard extends StatelessWidget {
         trailing: Text(
           '${kas.isPemasukan ? '+' : '-'} Rp ${kas.jumlah.toStringAsFixed(0)}',
           style: TextStyle(
-            color: kas.isPemasukan ? Colors.green : Colors.red,
+            color: kas.isPemasukan ? const Color(0xFF10B981) : const Color(0xFFE11D48),
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),

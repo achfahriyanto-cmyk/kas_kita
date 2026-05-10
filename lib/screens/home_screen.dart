@@ -28,13 +28,13 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Background lebih bersih
+      backgroundColor: const Color(0xFFF8FAFC), // Background lebih bersih
       appBar: AppBar(
         title: const Text(
           'KasKita',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.blue[700], // Warna biru modern
+        backgroundColor: const Color(0xFF1E293B), // Warna biru modern
         elevation: 0,
         centerTitle: true,
       ),
@@ -48,14 +48,14 @@ class HomeScreen extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 20),
                 decoration: BoxDecoration(
-                  color: Colors.blue[700],
+                  color: const Color(0xFF1E293B),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(30),
                     bottomRight: Radius.circular(30),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.blue.withOpacity(0.3),
+                      color: const Color(0xFF1E293B).withOpacity(0.3),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -91,7 +91,7 @@ class HomeScreen extends StatelessWidget {
                         child: _buildInfoCard(
                           title: 'Pemasukan',
                           amount: provider.totalIncome,
-                          color: Colors.green,
+                          color: const Color(0xFF10B981),
                           icon: Icons.arrow_downward,
                         ),
                       ),
@@ -100,7 +100,7 @@ class HomeScreen extends StatelessWidget {
                         child: _buildInfoCard(
                           title: 'Pengeluaran',
                           amount: provider.totalExpense,
-                          color: Colors.redAccent,
+                          color: const Color(0xFFE11D48),
                           icon: Icons.arrow_upward,
                         ),
                       ),
@@ -117,7 +117,7 @@ class HomeScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: Color(0xFF0F172A),
                   ),
                 ),
               ),
@@ -128,7 +128,7 @@ class HomeScreen extends StatelessWidget {
                     ? const Center(
                         child: Text(
                           'Belum ada transaksi',
-                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                          style: TextStyle(color: Color(0xFF94A3B8), fontSize: 16),
                         ),
                       )
                     : ListView.builder(
@@ -147,10 +147,10 @@ class HomeScreen extends StatelessWidget {
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               leading: CircleAvatar(
-                                backgroundColor: isIncome ? Colors.green[50] : Colors.red[50],
+                                backgroundColor: isIncome ? const Color(0xFFD1FAE5) : const Color(0xFFFFE4E6),
                                 child: Icon(
                                   isIncome ? Icons.arrow_downward : Icons.arrow_upward,
-                                  color: isIncome ? Colors.green : Colors.redAccent,
+                                  color: isIncome ? const Color(0xFF10B981) : const Color(0xFFE11D48),
                                 ),
                               ),
                               title: Text(
@@ -161,14 +161,14 @@ class HomeScreen extends StatelessWidget {
                                 padding: const EdgeInsets.only(top: 4.0),
                                 child: Text(
                                   _formatDate(tx.date),
-                                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                                  style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
                                 ),
                               ),
                               trailing: Text(
                                 '${isIncome ? '+' : '-'} ${_formatCurrency(tx.amount)}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: isIncome ? Colors.green : Colors.redAccent,
+                                  color: isIncome ? const Color(0xFF10B981) : const Color(0xFFE11D48),
                                   fontSize: 14,
                                 ),
                               ),
@@ -186,7 +186,7 @@ class HomeScreen extends StatelessWidget {
           // Route '/add' bisa Anda sesuaikan jika belum ada
           Navigator.pushNamed(context, '/add');
         },
-        backgroundColor: Colors.blue[700],
+        backgroundColor: const Color(0xFF1E293B),
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -232,8 +232,8 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: TextStyle(
-                  color: Colors.grey[600],
+                style: const TextStyle(
+                  color: Color(0xFF64748B),
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -244,7 +244,7 @@ class HomeScreen extends StatelessWidget {
           Text(
             _formatCurrency(amount),
             style: const TextStyle(
-              color: Colors.black87,
+              color: Color(0xFF0F172A),
               fontSize: 15,
               fontWeight: FontWeight.bold,
             ),

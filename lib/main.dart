@@ -24,14 +24,14 @@ class KasKitaApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
-            primary: Colors.blue[700]!,
-            secondary: Colors.green,
+            seedColor: const Color(0xFF1E293B),
+            primary: const Color(0xFF1E293B),
+            secondary: const Color(0xFF10B981),
             surface: Colors.white,
           ),
-          scaffoldBackgroundColor: Colors.grey[50],
-          appBarTheme: AppBarTheme(
-            backgroundColor: Colors.blue[700],
+          scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF1E293B),
             foregroundColor: Colors.white,
             elevation: 0,
             centerTitle: true,

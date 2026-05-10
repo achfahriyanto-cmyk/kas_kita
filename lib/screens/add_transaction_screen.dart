@@ -47,10 +47,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         // Kustomisasi warna kalender
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Colors.blue[700]!, // Warna header kalender
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF1E293B), // Warna header kalender
               onPrimary: Colors.white,
-              onSurface: Colors.black87,
+              onSurface: Color(0xFF0F172A),
             ),
           ),
           child: child!,
@@ -78,7 +78,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Nominal harus lebih besar dari 0'),
-            backgroundColor: Colors.redAccent,
+            backgroundColor: Color(0xFFE11D48),
           ),
         );
         return;
@@ -102,7 +102,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Transaksi berhasil ditambahkan!'),
-          backgroundColor: Colors.green,
+          backgroundColor: Color(0xFF10B981),
           duration: Duration(seconds: 2),
         ),
       );
@@ -115,13 +115,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         title: const Text(
           'Tambah Transaksi', 
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
         ),
-        backgroundColor: Colors.blue[700],
+        backgroundColor: const Color(0xFF1E293B),
         iconTheme: const IconThemeData(color: Colors.white), // Tombol back warna putih
         elevation: 0,
       ),
@@ -131,9 +131,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             // Dekorasi biru di belakang Card form
             Container(
               height: 40,
-              decoration: BoxDecoration(
-                color: Colors.blue[700],
-                borderRadius: const BorderRadius.only(
+              decoration: const BoxDecoration(
+                color: Color(0xFF1E293B),
+                borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
                 ),
@@ -147,7 +147,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Card(
                   elevation: 6,
-                  shadowColor: Colors.blue.withOpacity(0.1),
+                  shadowColor: const Color(0xFF1E293B).withOpacity(0.1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -164,13 +164,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             textCapitalization: TextCapitalization.sentences,
                             decoration: InputDecoration(
                               labelText: 'Judul Transaksi',
-                              prefixIcon: const Icon(Icons.title, color: Colors.blueGrey),
+                              prefixIcon: const Icon(Icons.title, color: Color(0xFF64748B)),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.blue[700]!, width: 2),
+                                borderSide: const BorderSide(color: Color(0xFF1E293B), width: 2),
                               ),
                             ),
                             validator: (value) {
@@ -188,13 +188,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               labelText: 'Nominal (Rp)',
-                              prefixIcon: const Icon(Icons.attach_money, color: Colors.blueGrey),
+                              prefixIcon: const Icon(Icons.attach_money, color: Color(0xFF64748B)),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.blue[700]!, width: 2),
+                                borderSide: const BorderSide(color: Color(0xFF1E293B), width: 2),
                               ),
                             ),
                             validator: (value) {
@@ -219,25 +219,25 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                     ? Icons.arrow_downward 
                                     : Icons.arrow_upward,
                                 color: _selectedType == 'income' 
-                                    ? Colors.green 
-                                    : Colors.redAccent,
+                                    ? const Color(0xFF10B981) 
+                                    : const Color(0xFFE11D48),
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.blue[700]!, width: 2),
+                                borderSide: const BorderSide(color: Color(0xFF1E293B), width: 2),
                               ),
                             ),
                             items: const [
                               DropdownMenuItem(
                                 value: 'expense', 
-                                child: Text('Pengeluaran', style: TextStyle(color: Colors.redAccent)),
+                                child: Text('Pengeluaran', style: TextStyle(color: Color(0xFFE11D48))),
                               ),
                               DropdownMenuItem(
                                 value: 'income', 
-                                child: Text('Pemasukan', style: TextStyle(color: Colors.green)),
+                                child: Text('Pemasukan', style: TextStyle(color: Color(0xFF10B981))),
                               ),
                             ],
                             onChanged: (value) {
@@ -256,13 +256,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             textCapitalization: TextCapitalization.sentences,
                             decoration: InputDecoration(
                               labelText: 'Kategori (contoh: Makan, Gaji)',
-                              prefixIcon: const Icon(Icons.category, color: Colors.blueGrey),
+                              prefixIcon: const Icon(Icons.category, color: Color(0xFF64748B)),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.blue[700]!, width: 2),
+                                borderSide: const BorderSide(color: Color(0xFF1E293B), width: 2),
                               ),
                             ),
                             validator: (value) {
@@ -281,14 +281,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             child: InputDecorator(
                               decoration: InputDecoration(
                                 labelText: 'Tanggal Transaksi',
-                                prefixIcon: const Icon(Icons.calendar_today, color: Colors.blueGrey),
+                                prefixIcon: const Icon(Icons.calendar_today, color: Color(0xFF64748B)),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
                               child: Text(
                                 _formatDate(_selectedDate),
-                                style: const TextStyle(fontSize: 16, color: Colors.black87),
+                                style: const TextStyle(fontSize: 16, color: Color(0xFF0F172A)),
                               ),
                             ),
                           ),
@@ -298,7 +298,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           ElevatedButton(
                             onPressed: _saveTransaction,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue[700],
+                              backgroundColor: const Color(0xFF1E293B),
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),

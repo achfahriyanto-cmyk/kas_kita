@@ -138,38 +138,103 @@ class HomeScreen extends StatelessWidget {
                           final tx = provider.transactions[index];
                           final isIncome = tx.type == 'income';
 
-                          return Card(
-                            elevation: 2,
-                            margin: const EdgeInsets.only(bottom: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                          return Dismissible(
+                            key: Key(tx.id),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE11D48),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: const Icon(
+                                Icons.delete_outline,
+                                color: Colors.white,
+                                size: 28,
+                              ),
                             ),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              leading: CircleAvatar(
-                                backgroundColor: isIncome ? const Color(0xFFD1FAE5) : const Color(0xFFFFE4E6),
-                                child: Icon(
-                                  isIncome ? Icons.arrow_downward : Icons.arrow_upward,
-                                  color: isIncome ? const Color(0xFF10B981) : const Color(0xFFE11D48),
+                            confirmDismiss: (direction) async {
+                              return await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    title: const Text('Hapus Transaksi?'),
+                                    content: const Text(
+                                        'Apakah Anda yakin ingin menghapus transaksi ini? Data yang dihapus tidak dapat dikembalikan.'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(false),
+                                        child: const Text(
+                                          'Batal',
+                                          style: TextStyle(color: Color(0xFF64748B)),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(true),
+                                        child: const Text(
+                                          'Hapus',
+                                          style: TextStyle(
+                                              color: Color(0xFFE11D48),
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            onDismissed: (direction) {
+                              provider.deleteTransaction(tx.id);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('Transaksi berhasil dihapus'),
+                                  backgroundColor: const Color(0xFF10B981),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  margin: const EdgeInsets.all(16),
                                 ),
+                              );
+                            },
+                            child: Card(
+                              elevation: 2,
+                              margin: const EdgeInsets.only(bottom: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
                               ),
-                              title: Text(
-                                tx.title,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: Text(
-                                  _formatDate(tx.date),
-                                  style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                leading: CircleAvatar(
+                                  backgroundColor: isIncome ? const Color(0xFFD1FAE5) : const Color(0xFFFFE4E6),
+                                  child: Icon(
+                                    isIncome ? Icons.arrow_downward : Icons.arrow_upward,
+                                    color: isIncome ? const Color(0xFF10B981) : const Color(0xFFE11D48),
+                                  ),
                                 ),
-                              ),
-                              trailing: Text(
-                                '${isIncome ? '+' : '-'} ${_formatCurrency(tx.amount)}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: isIncome ? const Color(0xFF10B981) : const Color(0xFFE11D48),
-                                  fontSize: 14,
+                                title: Text(
+                                  tx.title,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Text(
+                                    _formatDate(tx.date),
+                                    style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                                  ),
+                                ),
+                                trailing: Text(
+                                  '${isIncome ? '+' : '-'} ${_formatCurrency(tx.amount)}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: isIncome ? const Color(0xFF10B981) : const Color(0xFFE11D48),
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
                             ),

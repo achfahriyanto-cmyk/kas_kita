@@ -5,6 +5,7 @@ import 'providers/transaction_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/add_transaction_screen.dart';
 import 'screens/splash_screen.dart';
+import 'screens/login_screen.dart';
 
 void main() {
   runApp(const KasKitaApp());
@@ -43,6 +44,7 @@ class KasKitaApp extends StatelessWidget {
         initialRoute: '/splash',
         routes: {
           '/splash': (context) => const SplashScreen(),
+          '/login': (context) => const LoginScreen(),
           '/': (context) => const HomeScreen(),
           '/add': (context) => const AddTransactionScreen(),
         },

@@ -30,6 +30,12 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC), // Background lebih bersih
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed('/login');
+          },
+        ),
         title: const Text(
           'KasKita',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),

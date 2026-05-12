@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'providers/transaction_provider.dart';
 import 'screens/home_screen.dart';
+import 'screens/main_screen.dart';
 import 'screens/add_transaction_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/profile_screen.dart';
 
 void main() {
   runApp(const KasKitaApp());
@@ -45,7 +47,8 @@ class KasKitaApp extends StatelessWidget {
         routes: {
           '/splash': (context) => const SplashScreen(),
           '/login': (context) => const LoginScreen(),
-          '/': (context) => const HomeScreen(),
+          '/profile': (context) => const ProfileScreen(),
+          '/': (context) => const MainScreen(),
           '/add': (context) => const AddTransactionScreen(),
         },
       ),

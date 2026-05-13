@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/transaction_provider.dart';
+import '../providers/language_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -27,26 +28,26 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC), // Background lebih bersih
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.of(context).pushReplacementNamed('/login');
-          },
-        ),
-        title: const Text(
-          'KasKita',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        backgroundColor: const Color(0xFF1E293B), // Warna biru modern
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: Consumer<TransactionProvider>(
-        builder: (context, provider, child) {
-          return Column(
+    return Consumer2<TransactionProvider, LanguageProvider>(
+      builder: (context, provider, lang, child) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFF8FAFC), // Background lebih bersih
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                _showLogoutDialog(context, lang);
+              },
+            ),
+            title: const Text(
+              'KasKita',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+            backgroundColor: const Color(0xFF1E293B), // Warna biru modern
+            elevation: 0,
+            centerTitle: true,
+          ),
+          body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // --- 1. CARD SALDO UTAMA ---
@@ -69,9 +70,9 @@ class HomeScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    const Text(
-                      'Total Saldo',
-                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                    Text(
+                      lang.getText('Total Saldo', 'Total Balance'),
+                      style: const TextStyle(color: Colors.white70, fontSize: 16),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -95,7 +96,7 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _buildInfoCard(
-                          title: 'Pemasukan',
+                          title: lang.getText('Pemasukan', 'Income'),
                           amount: provider.totalIncome,
                           color: const Color(0xFF10B981),
                           icon: Icons.arrow_downward,
@@ -104,7 +105,7 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(width: 16),
                       Expanded(
                         child: _buildInfoCard(
-                          title: 'Pengeluaran',
+                          title: lang.getText('Pengeluaran', 'Expense'),
                           amount: provider.totalExpense,
                           color: const Color(0xFFE11D48),
                           icon: Icons.arrow_upward,
@@ -116,11 +117,11 @@ class HomeScreen extends StatelessWidget {
               ),
 
               // --- 3. JUDUL LIST TRANSAKSI TERBARU ---
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 child: Text(
-                  'Transaksi Terbaru',
-                  style: TextStyle(
+                  lang.getText('Transaksi Terbaru', 'Recent Transactions'),
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF0F172A),
@@ -131,10 +132,10 @@ class HomeScreen extends StatelessWidget {
               // --- 4. LIST TRANSAKSI ---
               Expanded(
                 child: provider.transactions.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Text(
-                          'Belum ada transaksi',
-                          style: TextStyle(color: Color(0xFF94A3B8), fontSize: 16),
+                          lang.getText('Belum ada transaksi', 'No transactions yet'),
+                          style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 16),
                         ),
                       )
                     : ListView.builder(
@@ -169,22 +170,23 @@ class HomeScreen extends StatelessWidget {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
                                     ),
-                                    title: const Text('Hapus Transaksi?'),
-                                    content: const Text(
-                                        'Apakah Anda yakin ingin menghapus transaksi ini? Data yang dihapus tidak dapat dikembalikan.'),
+                                    title: Text(lang.getText('Hapus Transaksi?', 'Delete Transaction?')),
+                                    content: Text(lang.getText(
+                                        'Apakah Anda yakin ingin menghapus transaksi ini? Data yang dihapus tidak dapat dikembalikan.',
+                                        'Are you sure you want to delete this transaction? Deleted data cannot be recovered.')),
                                     actions: <Widget>[
                                       TextButton(
                                         onPressed: () => Navigator.of(context).pop(false),
-                                        child: const Text(
-                                          'Batal',
-                                          style: TextStyle(color: Color(0xFF64748B)),
+                                        child: Text(
+                                          lang.getText('Batal', 'Cancel'),
+                                          style: const TextStyle(color: Color(0xFF64748B)),
                                         ),
                                       ),
                                       TextButton(
                                         onPressed: () => Navigator.of(context).pop(true),
-                                        child: const Text(
-                                          'Hapus',
-                                          style: TextStyle(
+                                        child: Text(
+                                          lang.getText('Hapus', 'Delete'),
+                                          style: const TextStyle(
                                               color: Color(0xFFE11D48),
                                               fontWeight: FontWeight.bold),
                                         ),
@@ -198,7 +200,7 @@ class HomeScreen extends StatelessWidget {
                               provider.deleteTransaction(tx.id);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text('Transaksi berhasil dihapus'),
+                                  content: Text(lang.getText('Transaksi berhasil dihapus', 'Transaction deleted successfully')),
                                   backgroundColor: const Color(0xFF10B981),
                                   behavior: SnackBarBehavior.floating,
                                   shape: RoundedRectangleBorder(
@@ -249,20 +251,44 @@ class HomeScreen extends StatelessWidget {
                       ),
               ),
             ],
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Route '/add' bisa Anda sesuaikan jika belum ada
-          Navigator.pushNamed(context, '/add');
-        },
-        backgroundColor: const Color(0xFF1E293B),
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: const Icon(Icons.add, color: Colors.white),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/add');
+            },
+            backgroundColor: const Color(0xFF1E293B),
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(Icons.add, color: Colors.white),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context, LanguageProvider lang) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(lang.getText('Keluar Akun?', 'Logout?')),
+        content: Text(lang.getText('Apakah Anda yakin ingin keluar dari aplikasi KasKita?',
+            'Are you sure you want to logout from KasKita?')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(lang.getText('Batal', 'Cancel')),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.of(context).pushReplacementNamed('/login');
+            },
+            child: Text(lang.getText('Keluar', 'Logout'), style: const TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }

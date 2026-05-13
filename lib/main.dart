@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'providers/transaction_provider.dart';
+import 'providers/language_provider.dart';
+import 'providers/notification_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/add_transaction_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/edit_profile_screen.dart';
 
 void main() {
   runApp(const KasKitaApp());
@@ -20,8 +23,9 @@ class KasKitaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Mendaftarkan TransactionProvider
         ChangeNotifierProvider(create: (_) => TransactionProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: MaterialApp(
         title: 'KasKita',
@@ -48,6 +52,7 @@ class KasKitaApp extends StatelessWidget {
           '/splash': (context) => const SplashScreen(),
           '/login': (context) => const LoginScreen(),
           '/profile': (context) => const ProfileScreen(),
+          '/edit_profile': (context) => const EditProfileScreen(),
           '/': (context) => const MainScreen(),
           '/add': (context) => const AddTransactionScreen(),
         },

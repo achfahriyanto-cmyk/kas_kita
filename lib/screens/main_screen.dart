@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
 
@@ -25,50 +27,54 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
+    return Consumer<LanguageProvider>(
+      builder: (context, lang, child) {
+        return Scaffold(
+          body: IndexedStack(
+            index: _selectedIndex,
+            children: _screens,
+          ),
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
-          child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            backgroundColor: Colors.white,
-            selectedItemColor: const Color(0xFF10B981),
-            unselectedItemColor: const Color(0xFF94A3B8),
-            showUnselectedLabels: true,
-            type: BottomNavigationBarType.fixed,
-            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_rounded),
-                activeIcon: Icon(Icons.home_rounded),
-                label: 'Beranda',
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person_rounded),
-                activeIcon: Icon(Icons.person_rounded),
-                label: 'Profil',
+              child: BottomNavigationBar(
+                currentIndex: _selectedIndex,
+                onTap: _onItemTapped,
+                backgroundColor: Colors.white,
+                selectedItemColor: const Color(0xFF10B981),
+                unselectedItemColor: const Color(0xFF94A3B8),
+                showUnselectedLabels: true,
+                type: BottomNavigationBarType.fixed,
+                selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                items: [
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.home_rounded),
+                    activeIcon: const Icon(Icons.home_rounded),
+                    label: lang.getText('Beranda', 'Home'),
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.person_rounded),
+                    activeIcon: const Icon(Icons.person_rounded),
+                    label: lang.getText('Profil', 'Profile'),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

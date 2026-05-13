@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import '../providers/notification_provider.dart';
+import '../providers/user_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<LanguageProvider, NotificationProvider>(
-      builder: (context, lang, notify, child) {
+    return Consumer3<LanguageProvider, NotificationProvider, UserProvider>(
+      builder: (context, lang, notify, user, child) {
         return Scaffold(
           backgroundColor: const Color(0xFFF8FAFC),
           appBar: AppBar(
@@ -54,20 +55,23 @@ class ProfileScreen extends StatelessWidget {
                           Positioned(
                             bottom: 0,
                             right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF10B981),
-                                shape: BoxShape.circle,
+                            child: GestureDetector(
+                              onTap: () => Navigator.pushNamed(context, '/edit_profile'),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF10B981),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.edit, color: Colors.white, size: 20),
                               ),
-                              child: const Icon(Icons.edit, color: Colors.white, size: 20),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        lang.getText('Pengguna KasKita', 'KasKita User'),
+                        user.name,
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -76,7 +80,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'pengguna@kaskita.com',
+                        user.email,
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.7),

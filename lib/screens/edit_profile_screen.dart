@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
+import '../providers/user_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -15,13 +16,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   String _gender = 'Laki-laki';
+  bool _isInitialized = false;
 
   @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController(text: 'Pengguna KasKita');
-    _emailController = TextEditingController(text: 'pengguna@kaskita.com');
-    _phoneController = TextEditingController(text: '081234567890');
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      final user = Provider.of<UserProvider>(context, listen: false);
+      _nameController = TextEditingController(text: user.name);
+      _emailController = TextEditingController(text: user.email);
+      _phoneController = TextEditingController(text: user.phone);
+      _gender = user.gender;
+      _isInitialized = true;
+    }
   }
 
   @override
@@ -32,9 +39,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
-  void _save(LanguageProvider lang) {
+  void _save(LanguageProvider lang, UserProvider user) {
     if (_formKey.currentState!.validate()) {
-      // Simulasi simpan data
+      user.updateProfile(
+        name: _nameController.text,
+        email: _emailController.text,
+        phone: _phoneController.text,
+        gender: _gender,
+      );
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(lang.getText('Profil berhasil diperbarui', 'Profile updated successfully')),
@@ -48,8 +61,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context, lang, child) {
+    return Consumer2<LanguageProvider, UserProvider>(
+      builder: (context, lang, user, child) {
         return Scaffold(
           backgroundColor: const Color(0xFFF8FAFC),
           appBar: AppBar(
@@ -169,7 +182,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                         // Tombol Simpan
                         ElevatedButton(
-                          onPressed: () => _save(lang),
+                          onPressed: () => _save(lang, user),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF1E293B),
                             foregroundColor: Colors.white,

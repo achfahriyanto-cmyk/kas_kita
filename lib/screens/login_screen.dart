@@ -120,8 +120,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                   TextField(
                     controller: _emailController,
                     decoration: InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined),
+                      labelText: 'User Name',
+                      prefixIcon: const Icon(Icons.person_outlined),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),

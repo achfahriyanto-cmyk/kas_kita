@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,11 +33,25 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _controller.forward();
 
-    Timer(const Duration(seconds: 3), () {
+    _checkLogin();
+  }
+
+  Future<void> _checkLogin() async {
+    // Memberikan waktu untuk animasi splash berjalan minimal 2 detik
+    await Future.delayed(const Duration(seconds: 2));
+    
+    if (mounted) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.checkLoginStatus();
+      
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/login');
+        if (authProvider.isAuthenticated) {
+          Navigator.of(context).pushReplacementNamed('/');
+        } else {
+          Navigator.of(context).pushReplacementNamed('/login');
+        }
       }
-    });
+    }
   }
 
   @override

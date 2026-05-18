@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -50,20 +52,54 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     super.dispose();
   }
 
-  void _handleLogin() {
-    // Simulasi login sukses
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator()),
-    );
+  void _handleLogin() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+    
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    
+    // Sembunyikan keyboard
+    FocusScope.of(context).unfocus();
 
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        Navigator.pop(context); // Tutup loading
+    final success = await authProvider.login(email, password);
+    
+    if (mounted) {
+      if (success) {
         Navigator.of(context).pushReplacementNamed('/');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.errorMessage ?? 'Login gagal'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
-    });
+    }
+  }
+
+  void _handleRegister() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+    
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    
+    // Sembunyikan keyboard
+    FocusScope.of(context).unfocus();
+
+    final success = await authProvider.register(email, password);
+    
+    if (mounted) {
+      if (success) {
+        Navigator.of(context).pushReplacementNamed('/');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.errorMessage ?? 'Register gagal'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -158,24 +194,38 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                   const SizedBox(height: 24),
                   
                   // Login Button
-                  ElevatedButton(
-                    onPressed: _handleLogin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1E293B),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'Masuk',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, child) {
+                      return ElevatedButton(
+                        onPressed: authProvider.isLoading ? null : _handleLogin,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1E293B),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                          disabledBackgroundColor: const Color(0xFF1E293B).withOpacity(0.6),
+                        ),
+                        child: authProvider.isLoading
+                            ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'Masuk',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      );
+                    }
                   ),
                   const SizedBox(height: 24),
                   
@@ -188,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: _handleRegister,
                         child: const Text(
                           'Daftar Sekarang',
                           style: TextStyle(

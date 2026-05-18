@@ -5,6 +5,7 @@ import 'providers/transaction_provider.dart';
 import 'providers/language_provider.dart';
 import 'providers/notification_provider.dart';
 import 'providers/user_provider.dart';
+import 'providers/auth_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/add_transaction_screen.dart';
@@ -28,6 +29,7 @@ class KasKitaApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: MaterialApp(
         title: 'KasKita',

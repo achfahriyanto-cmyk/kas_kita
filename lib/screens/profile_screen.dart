@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import '../providers/notification_provider.dart';
 import '../providers/user_provider.dart';
+import '../providers/auth_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -354,9 +355,14 @@ class ProfileScreen extends StatelessWidget {
             child: Text(lang.getText('Batal', 'Cancel')),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.of(context).pushReplacementNamed('/login');
+            onPressed: () async {
+              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+              await authProvider.logout();
+              
+              if (context.mounted) {
+                Navigator.pop(context);
+                Navigator.of(context).pushReplacementNamed('/login');
+              }
             },
             child: Text(lang.getText('Keluar', 'Logout'), style: const TextStyle(color: Colors.red)),
           ),

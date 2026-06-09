@@ -59,6 +59,153 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
+  String _formatCurrency(double amount) {
+    String amountStr = amount.toStringAsFixed(0);
+    String result = '';
+    int count = 0;
+    for (int i = amountStr.length - 1; i >= 0; i--) {
+      result = amountStr[i] + result;
+      count++;
+      if (count % 3 == 0 && i != 0) {
+        result = '.$result';
+      }
+    }
+    return 'Rp $result';
+  }
+
+  void _executeSave(TransactionModel newTransaction, LanguageProvider lang) {
+    Provider.of<TransactionProvider>(context, listen: false).addTransaction(newTransaction);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(lang.getText('Transaksi berhasil ditambahkan!', 'Transaction added successfully!')),
+        backgroundColor: const Color(0xFF10B981),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    Navigator.pop(context);
+  }
+
+  void _showBalanceWarningDialog(TransactionModel newTransaction, double currentBalance, LanguageProvider lang) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: Color(0xFFE11D48),
+                size: 28,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  lang.getText('Saldo Tidak Cukup', 'Insufficient Balance'),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E293B),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                lang.getText(
+                  'Saldo Anda saat ini tidak mencukupi untuk melakukan pengeluaran ini.',
+                  'Your current balance is not enough to make this expense.'
+                ),
+                style: const TextStyle(color: Color(0xFF475569)),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          lang.getText('Saldo Saat Ini:', 'Current Balance:'),
+                          style: const TextStyle(color: Color(0xFF64748B), fontSize: 13),
+                        ),
+                        Text(
+                          _formatCurrency(currentBalance),
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          lang.getText('Nominal Pengeluaran:', 'Expense Amount:'),
+                          style: const TextStyle(color: Color(0xFF64748B), fontSize: 13),
+                        ),
+                        Text(
+                          _formatCurrency(newTransaction.amount),
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFE11D48)),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                lang.getText(
+                  'Apakah Anda yakin tetap ingin menyimpan transaksi ini?',
+                  'Are you sure you want to save this transaction anyway?'
+                ),
+                style: const TextStyle(fontWeight: FontWeight.w500, color: Color(0xFF1E293B)),
+              ),
+            ],
+          ),
+          actionsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                lang.getText('Batal', 'Cancel'),
+                style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.bold),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _executeSave(newTransaction, lang);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE11D48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              ),
+              child: Text(
+                lang.getText('Tetap Simpan', 'Save Anyway'),
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _saveTransaction(LanguageProvider lang) {
     if (_formKey.currentState!.validate()) {
       final amount = double.tryParse(_amountController.text.trim()) ?? 0.0;
@@ -82,17 +229,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         category: _categoryController.text.trim(),
       );
 
-      Provider.of<TransactionProvider>(context, listen: false).addTransaction(newTransaction);
+      final txProvider = Provider.of<TransactionProvider>(context, listen: false);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(lang.getText('Transaksi berhasil ditambahkan!', 'Transaction added successfully!')),
-          backgroundColor: const Color(0xFF10B981),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-
-      Navigator.pop(context);
+      if (_selectedType == 'expense' && txProvider.totalBalance < amount) {
+        _showBalanceWarningDialog(newTransaction, txProvider.totalBalance, lang);
+      } else {
+        _executeSave(newTransaction, lang);
+      }
     }
   }
 
